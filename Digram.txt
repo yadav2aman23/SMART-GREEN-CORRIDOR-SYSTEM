@@ -1,0 +1,30 @@
+| Button | Output  |
+| ------ | ------- |
+| BTN1   | LED1 ON |
+| BTN2   | LED2 ON |
+| BTN3   | LED3 ON |
+| BTN4   | LED4 ON |
+
+
+🔷 PIN CONNECTION (UNO)
+Signal		Red	Yellow	Green
+Signal 		4	5	6
+Signal 		7	8	9
+Signal 		10	11	12
+Signal 		13	A0	A1
+
+
+ESP8266	Arduino UNO
+TX	Pin 2
+RX	Pin 3
+GND	GND
+
+Sender KA code 
+Button	ESP8266 Pin
+Button 1	D1
+Button 2	D2
+Button 3	D7
+Button 4	D3
+ESP8266 Pin ---- Button ---- GND
+
+resitior  all led in esp8266 ---3v3
