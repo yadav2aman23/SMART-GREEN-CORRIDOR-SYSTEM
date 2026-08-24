@@ -66,7 +66,7 @@ cbor2==6.1.2
 celery==5.6.3
 censys==2.2.19
 certifi==2026.7.22
-certipy-ad==5.1.0
+
 cffi==2.0.0
 chardet==5.2.0
 charset-normalizer==3.4.7
