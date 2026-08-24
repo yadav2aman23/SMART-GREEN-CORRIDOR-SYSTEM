@@ -3,6 +3,8 @@ from device_auth import verify_device
 from fastapi.security import OAuth2PasswordRequestForm
 from auth import create_access_token, get_current_admin
 from fastapi.responses import HTMLResponse
+import os
+import psycopg2
 import psycopg2
 import os
 import shutil
@@ -27,10 +29,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
 
 def get_db_connection():
     return psycopg2.connect(
-        host="localhost",
-        database="smartgate",
-        user="smartgate_user",
-        password="SmartGate@123"
+        os.environ["postgresql://smart_gate_db_ar45_user:0ki4C8MKH5kT5IeB3gU8S1eqYcyojOaq@dpg-da69tpjm8hqs73eo5uc0-a/smart_gate_db_ar45"]
     )
 
 
