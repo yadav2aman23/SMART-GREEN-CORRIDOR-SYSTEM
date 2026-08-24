@@ -12,3 +12,4 @@ fastapi
 uvicorn
 python-jose[cryptography]
 python-jose==3.5.0
+psycopg2-binary
