@@ -1,0 +1,245 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>Smart Gate Dashboard</title>
+
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            background: #f4f6f8;
+        }
+
+        header {
+            background: #111827;
+            color: white;
+            padding: 20px 30px;
+        }
+
+        h1 {
+            margin: 0;
+        }
+
+        .container {
+            padding: 25px;
+        }
+
+        .cards {
+            display: flex;
+            gap: 20px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+        }
+
+        .card {
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            min-width: 180px;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        .card h3 {
+            margin-top: 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.08);
+        }
+
+        th, td {
+            padding: 12px;
+            border-bottom: 1px solid #ddd;
+            text-align: left;
+        }
+
+        th {
+            background: #111827;
+            color: white;
+        }
+
+        .granted {
+            color: green;
+            font-weight: bold;
+        }
+
+        .denied {
+            color: red;
+            font-weight: bold;
+        }
+
+        img {
+            width: 70px;
+            height: 50px;
+            object-fit: cover;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+
+<body>
+
+<header>
+    <h1>🔐 Smart Gate Cloud</h1>
+</header>
+
+<div class="container">
+
+    <div class="cards">
+
+        <div class="card">
+            <h3>Total Records</h3>
+            <div id="totalRecords">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Granted</h3>
+            <div id="grantedRecords">0</div>
+        </div>
+
+        <div class="card">
+            <h3>Denied</h3>
+            <div id="deniedRecords">0</div>
+        </div>
+
+    </div>
+
+    <h2>Recent Access</h2>
+
+    <table>
+
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Card UID</th>
+                <th>Date</th>
+                <th>Time</th>
+                <th>Status</th>
+                <th>Photo</th>
+            </tr>
+        </thead>
+
+        <tbody id="logsTable">
+        </tbody>
+
+    </table>
+
+</div>
+
+
+<script>
+
+async function loadLogs() {
+
+    const token = localStorage.getItem("access_token");
+
+    if (!token) {
+        window.location.href = "/login";
+        return;
+    }
+
+    try {
+
+        const response = await fetch(
+            "/api/access-logs",
+            {
+                headers: {
+                    "Authorization": "Bearer " + token
+                }
+            }
+        );
+
+        if (response.status === 401) {
+
+            localStorage.removeItem("access_token");
+
+            window.location.href = "/login";
+
+            return;
+        }
+
+        const data = await response.json();
+
+        const logs = data.logs || [];
+
+        document.getElementById("totalRecords").innerText =
+            logs.length;
+
+        const granted = logs.filter(
+            log => log.status === "GRANTED"
+        ).length;
+
+        const denied = logs.filter(
+            log => log.status === "DENIED"
+        ).length;
+
+        document.getElementById("grantedRecords").innerText =
+            granted;
+
+        document.getElementById("deniedRecords").innerText =
+            denied;
+
+        const table =
+            document.getElementById("logsTable");
+
+        table.innerHTML = "";
+
+        logs.forEach(log => {
+
+            let photo = "-";
+
+            if (log.photo_url) {
+
+                photo =
+                    `<img src="/${log.photo_url}"
+                    alt="Access photo">`;
+            }
+
+            table.innerHTML += `
+                <tr>
+
+                    <td>${log.name}</td>
+
+                    <td>${log.card_uid}</td>
+
+                    <td>${log.date}</td>
+
+                    <td>${log.time}</td>
+
+                    <td class="${
+                        log.status === "GRANTED"
+                        ? "granted"
+                        : "denied"
+                    }">
+                        ${log.status}
+                    </td>
+
+                    <td>${photo}</td>
+
+                </tr>
+            `;
+        });
+
+    } catch (error) {
+
+        console.error(error);
+
+    }
+
+}
+
+
+loadLogs();
+
+setInterval(loadLogs, 10000);
+
+</script>
+
+</body>
+</html>

@@ -1,0 +1,6 @@
+venv/
+__pycache__/
+uploads/
+*.pyc
+.env
+smart-gate-cloud-backup.tar.gz
