@@ -50,7 +50,7 @@ bcrypt==5.0.0
 beautifulsoup4==4.15.0
 bidict==0.23.1
 billiard==4.2.4
-binwalk==2.4.3
+
 bitstruct==8.22.1
 bleach==6.3.0
 blinker==1.9.0
