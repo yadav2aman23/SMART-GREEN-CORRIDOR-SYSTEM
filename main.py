@@ -28,7 +28,7 @@ oauth2_scheme = OAuth2PasswordBearer(tokenUrl="/api/login")
 # =========================
 
 def get_db_connection():
-    database_url = os.environ.get("postgresql://smart_gate_db_ar45_user:0ki4C8MKH5kT5IeB3gU8S1eqYcyojOaq@dpg-da69tpjm8hqs73eo5uc0-a/smart_gate_db_ar45")
+    database_url = os.environ.get("DATABASE_URL")
 
     if not database_url:
         raise Exception("DATABASE_URL environment variable is missing")
