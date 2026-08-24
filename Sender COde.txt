@@ -1,0 +1,96 @@
+#include <ESP8266WiFi.h>
+#include <espnow.h>
+
+// Receiver MAC Address
+uint8_t receiverMAC[] = {0x48, 0x55, 0x19, 0x00, 0xE5, 0xB6};
+
+// Buttons
+#define BTN1 D1
+#define BTN2 D2
+#define BTN3 D7
+#define BTN4 D3
+
+typedef struct {
+  int line;
+} Message;
+
+Message msg;
+
+// 🔥 Callback for send status
+void OnDataSent(uint8_t *mac_addr, uint8_t sendStatus) {
+  Serial.print("Send Status: ");
+  if (sendStatus == 0) {
+    Serial.println("✅ Success (Connected)");
+  } else {
+    Serial.println("❌ Failed (Not Connected)");
+  }
+}
+
+void setup() {
+  Serial.begin(115200);
+
+  Serial.println("\n=== ESP8266 SENDER STARTING ===");
+
+  pinMode(BTN1, INPUT_PULLUP);
+  pinMode(BTN2, INPUT_PULLUP);
+  pinMode(BTN3, INPUT_PULLUP);
+  pinMode(BTN4, INPUT_PULLUP);
+
+  WiFi.mode(WIFI_STA);
+  WiFi.disconnect();
+
+  // 🔥 Print MAC Address
+  Serial.print("My MAC Address: ");
+  Serial.println(WiFi.macAddress());
+
+  // ESP-NOW init
+  if (esp_now_init() != 0) {
+    Serial.println("❌ ESP-NOW Init Failed");
+    return;
+  } else {
+    Serial.println("✅ ESP-NOW Init Success");
+  }
+
+  esp_now_set_self_role(ESP_NOW_ROLE_CONTROLLER);
+
+  // Register send callback
+  esp_now_register_send_cb(OnDataSent);
+
+  // Add peer
+  if (esp_now_add_peer(receiverMAC, ESP_NOW_ROLE_SLAVE, 1, NULL, 0) == 0) {
+    Serial.println("✅ Peer Added Successfully");
+  } else {
+    Serial.println("❌ Failed to Add Peer");
+  }
+
+  Serial.println("🚀 Sender Ready");
+}
+
+void sendSignal(int line) {
+  msg.line = line;
+
+  Serial.print("Sending Signal: ");
+  Serial.println(line);
+
+  esp_now_send(receiverMAC, (uint8_t *)&msg, sizeof(msg));
+}
+
+void loop() {
+
+  if (digitalRead(BTN1) == LOW) {
+    sendSignal(1);
+    delay(300);
+  }
+  else if (digitalRead(BTN2) == LOW) {
+    sendSignal(2);
+    delay(300);
+  }
+  else if (digitalRead(BTN3) == LOW) {
+    sendSignal(3);
+    delay(300);
+  }
+  else if (digitalRead(BTN4) == LOW) {
+    sendSignal(4);
+    delay(300);
+  }
+}
