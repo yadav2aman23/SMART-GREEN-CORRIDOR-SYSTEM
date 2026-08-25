@@ -399,38 +399,7 @@ async def upload_photo(
         "photo_url": file_path
     }
 
-    allowed_types = {
-        "image/jpeg",
-        "image/png",
-        "image/webp"
-    }
-
-    if file.content_type not in allowed_types:
-        raise HTTPException(
-            status_code=400,
-            detail="Only JPG, PNG and WEBP images are allowed"
-        )
-
-    extension = os.path.splitext(file.filename)[1].lower()
-
-    filename = f"{uuid.uuid4()}{extension}"
-
-    file_path = os.path.join(
-        UPLOAD_DIR,
-        filename
-    )
-
-    with open(file_path, "wb") as buffer:
-        shutil.copyfileobj(
-            file.file,
-            buffer
-        )
-
-    return {
-        "message": "Photo uploaded successfully",
-        "filename": filename,
-        "path": file_path
-    }
+    
 # =========================
 # ADMIN LOGIN
 # =========================
